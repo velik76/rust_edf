@@ -2,7 +2,6 @@ use crate::common_header::CommonHeader;
 use crate::signal::Signal;
 use crate::signal_info::SignalInfo;
 use std::fs::File;
-use std::io::Write;
 use std::path::PathBuf;
 
 pub struct Writer {
@@ -26,10 +25,10 @@ impl Writer {
         }
     }
 
-    pub fn add_signal(&mut self, _signal_info: SignalInfo) -> usize {
-        let signal: Signal = Signal::new(_signal_info);
+    pub fn add_signal(&mut self, _signal_info: SignalInfo) {
+        let mut signal: Signal = Signal::new();
+        signal.set_signal_info(_signal_info);
         self.signals.push(signal);
-        self.signals.len() - 1
     }
 
     pub fn start(
@@ -54,78 +53,39 @@ impl Writer {
             .unwrap();
 
         self.cmn_header
-            .dump2file(self.file.as_mut().unwrap())
+            .write_to_file(self.file.as_mut().unwrap())
             .unwrap();
 
+        let mut _file = self.file.as_mut().unwrap();
         for signal in self.signals.iter() {
-            self.file
-                .as_ref()
-                .unwrap()
-                .write_all(signal.get_string_signal_label().as_bytes())
-                .unwrap();
+            signal.write_to_file_signal_label(_file).unwrap();
         }
         for signal in self.signals.iter() {
-            self.file
-                .as_ref()
-                .unwrap()
-                .write_all(signal.get_string_transducer().as_bytes())
-                .unwrap();
+            signal.write_to_file_transducer(_file).unwrap();
         }
         for signal in self.signals.iter() {
-            self.file
-                .as_ref()
-                .unwrap()
-                .write_all(signal.get_string_phys_dimension().as_bytes())
-                .unwrap();
+            signal.write_to_file_phys_dimension(_file).unwrap();
         }
         for signal in self.signals.iter() {
-            self.file
-                .as_ref()
-                .unwrap()
-                .write_all(signal.get_string_phys_min().as_bytes())
-                .unwrap();
+            signal.write_to_file_phys_min(_file).unwrap();
         }
         for signal in self.signals.iter() {
-            self.file
-                .as_ref()
-                .unwrap()
-                .write_all(signal.get_string_phys_max().as_bytes())
-                .unwrap();
+            signal.write_to_file_phys_max(_file).unwrap();
         }
         for signal in self.signals.iter() {
-            self.file
-                .as_ref()
-                .unwrap()
-                .write_all(signal.get_string_dig_min().as_bytes())
-                .unwrap();
+            signal.write_to_file_dig_min(_file).unwrap();
         }
         for signal in self.signals.iter() {
-            self.file
-                .as_ref()
-                .unwrap()
-                .write_all(signal.get_string_dig_max().as_bytes())
-                .unwrap();
+            signal.write_to_file_dig_max(_file).unwrap();
         }
         for signal in self.signals.iter() {
-            self.file
-                .as_ref()
-                .unwrap()
-                .write_all(signal.get_string_filter().as_bytes())
-                .unwrap();
+            signal.write_to_file_filter(_file).unwrap();
         }
         for signal in self.signals.iter() {
-            self.file
-                .as_ref()
-                .unwrap()
-                .write_all(signal.get_string_samples_per_record().as_bytes())
-                .unwrap();
+            signal.write_to_file_samples_per_record(_file).unwrap();
         }
         for signal in self.signals.iter() {
-            self.file
-                .as_ref()
-                .unwrap()
-                .write_all(signal.get_string_comment().as_bytes())
-                .unwrap();
+            signal.write_to_file_comment(_file).unwrap();
         }
 
         let mut max_record_per_sample: u16 = 0;
@@ -163,7 +123,7 @@ impl Writer {
         self.signals.len()
     }
 
-    pub fn set_samples(&mut self, _samples: &mut Vec<u16>) -> Result<(), &str> {
+    pub fn set_samples(&mut self, _samples: &mut Vec<i16>) -> Result<(), &str> {
         if self.signals.len() == 0 {
             return Err("Not configured");
         }
@@ -182,9 +142,9 @@ impl Writer {
             }
 
             self.records = self.records + 1;
-            self.cmn_header.setRecordsCount(self.records);
+            self.cmn_header.set_records_count(self.records);
             self.cmn_header
-                .dump2file(self.file.as_mut().unwrap())
+                .write_to_file(self.file.as_mut().unwrap())
                 .unwrap();
         }
 

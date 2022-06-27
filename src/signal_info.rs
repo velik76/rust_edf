@@ -1,29 +1,44 @@
-const LABEL_LENGTH: usize = 16;
-const TRANSDUCER_LENGTH: usize = 80;
-const PHYS_DIMENSION_LENGTH: usize = 8;
-const PHYS_MIN_LENGTH: usize = 8;
-const PHYS_MAX_LENGTH: usize = 8;
-const DIG_MIN_LENGTH: usize = 8;
-const DIG_MAX_LENGTH: usize = 8;
-const FILTER_LENGTH: usize = 80;
-const SAMPLES_PER_RECORD_LENGTH: usize = 8;
-const COMMENT_LENGTH: usize = 32;
+pub const LABEL_LENGTH: usize = 16;
+pub const TRANSDUCER_LENGTH: usize = 80;
+pub const PHYS_DIMENSION_LENGTH: usize = 8;
+pub const PHYS_MIN_LENGTH: usize = 8;
+pub const PHYS_MAX_LENGTH: usize = 8;
+pub const DIG_MIN_LENGTH: usize = 8;
+pub const DIG_MAX_LENGTH: usize = 8;
+pub const FILTER_LENGTH: usize = 80;
+pub const SAMPLES_PER_RECORD_LENGTH: usize = 8;
+pub const COMMENT_LENGTH: usize = 32;
 
 #[derive(Clone)]
 pub struct SignalInfo {
-    pub label: &'static str,
-    pub transducer: &'static str,
-    pub phys_dimension: &'static str,
+    pub label: String,
+    pub transducer: String,
+    pub phys_dimension: String,
     pub phys_min: i16,
     pub phys_max: i16,
     pub dig_min: i16,
     pub dig_max: i16,
-    pub filter: &'static str,
+    pub filter: String,
     pub samples_per_record: u16,
-    pub comment: &'static str,
+    pub comment: String,
 }
 
 impl SignalInfo {
+    pub fn new() -> SignalInfo {
+        SignalInfo {
+            label: String::new(),
+            transducer: String::new(),
+            phys_dimension: String::new(),
+            phys_min: 0,
+            phys_max: 0,
+            dig_min: 0,
+            dig_max: 0,
+            filter: String::new(),
+            samples_per_record: 0,
+            comment: String::new(),
+        }
+    }
+
     pub fn get_formatted_signal_info(&self) -> String {
         format!("{:<1$}", self.label, LABEL_LENGTH)
     }

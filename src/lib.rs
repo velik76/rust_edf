@@ -1,6 +1,7 @@
 // #[cfg(test)]
+pub mod reader;
 pub mod signal_info;
 pub mod writer;
 
-mod signal;
 mod common_header;
+mod signal;

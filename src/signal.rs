@@ -4,21 +4,146 @@ use std::io::*;
 use std::result::Result;
 use std::{mem, slice};
 
+#[derive(Clone)]
 pub struct Signal {
     signal_info: SignalInfo,
     downsample_factor: u16,
     actual_downsample_value: u16,
-    samples: Vec<u16>,
+    samples: Vec<i16>,
 }
 
 impl Signal {
-    pub fn new(_signal_info: SignalInfo) -> Signal {
+    pub fn new() -> Signal {
         Signal {
-            signal_info: _signal_info,
+            signal_info: SignalInfo::new(),
             downsample_factor: 0,
             actual_downsample_value: 0,
             samples: Vec::new(),
         }
+    }
+
+    pub fn set_signal_info(&mut self, _signal_info: SignalInfo) {
+        self.signal_info = _signal_info;
+    }
+
+    pub fn write_to_file_signal_label(&self, _file: &mut File) -> Result<(), std::io::Error> {
+        _file.write_all(self.get_string_signal_label().as_bytes())
+    }
+    pub fn read_from_file_signal_label(&mut self, _file: &mut File) -> Result<(), &str> {
+        let mut buffer = [0u8; crate::signal_info::LABEL_LENGTH];
+        _file.read_exact(&mut buffer).unwrap();
+        self.signal_info.label = std::str::from_utf8(&buffer).unwrap().trim().to_string();
+        Ok(())
+    }
+
+    pub fn write_to_file_transducer(&self, _file: &mut File) -> Result<(), std::io::Error> {
+        _file.write_all(self.get_string_transducer().as_bytes())
+    }
+    pub fn read_from_file_transducer(&mut self, _file: &mut File) -> Result<(), &str> {
+        let mut buffer = [0u8; crate::signal_info::TRANSDUCER_LENGTH];
+        _file.read_exact(&mut buffer).unwrap();
+        self.signal_info.transducer = std::str::from_utf8(&buffer).unwrap().trim().to_string();
+        Ok(())
+    }
+
+    pub fn write_to_file_phys_dimension(&self, _file: &mut File) -> Result<(), std::io::Error> {
+        _file.write_all(self.get_string_phys_dimension().as_bytes())
+    }
+    pub fn read_from_file_phys_dimension(&mut self, _file: &mut File) -> Result<(), &str> {
+        let mut buffer = [0u8; crate::signal_info::PHYS_DIMENSION_LENGTH];
+        _file.read_exact(&mut buffer).unwrap();
+        self.signal_info.phys_dimension = std::str::from_utf8(&buffer).unwrap().trim().to_string();
+        Ok(())
+    }
+
+    pub fn write_to_file_phys_min(&self, _file: &mut File) -> Result<(), std::io::Error> {
+        _file.write_all(self.get_string_phys_min().as_bytes())
+    }
+    pub fn read_from_file_phys_min(&mut self, _file: &mut File) -> Result<(), &str> {
+        let mut buffer = [0u8; crate::signal_info::PHYS_MIN_LENGTH];
+        _file.read_exact(&mut buffer).unwrap();
+        self.signal_info.phys_min = std::str::from_utf8(&buffer)
+            .unwrap()
+            .trim()
+            .parse::<i16>()
+            .unwrap();
+        Ok(())
+    }
+
+    pub fn write_to_file_phys_max(&self, _file: &mut File) -> Result<(), std::io::Error> {
+        _file.write_all(self.get_string_phys_max().as_bytes())
+    }
+    pub fn read_from_file_phys_max(&mut self, _file: &mut File) -> Result<(), &str> {
+        let mut buffer = [0u8; crate::signal_info::PHYS_MAX_LENGTH];
+        _file.read_exact(&mut buffer).unwrap();
+        self.signal_info.phys_max = std::str::from_utf8(&buffer)
+            .unwrap()
+            .trim()
+            .parse::<i16>()
+            .unwrap();
+        Ok(())
+    }
+
+    pub fn write_to_file_dig_min(&self, _file: &mut File) -> Result<(), std::io::Error> {
+        _file.write_all(self.get_string_dig_min().as_bytes())
+    }
+    pub fn read_from_file_dig_min(&mut self, _file: &mut File) -> Result<(), &str> {
+        let mut buffer = [0u8; crate::signal_info::DIG_MIN_LENGTH];
+        _file.read_exact(&mut buffer).unwrap();
+        self.signal_info.dig_min = std::str::from_utf8(&buffer)
+            .unwrap()
+            .trim()
+            .parse::<i16>()
+            .unwrap();
+        Ok(())
+    }
+
+    pub fn write_to_file_dig_max(&self, _file: &mut File) -> Result<(), std::io::Error> {
+        _file.write_all(self.get_string_dig_max().as_bytes())
+    }
+    pub fn read_from_file_dig_max(&mut self, _file: &mut File) -> Result<(), &str> {
+        let mut buffer = [0u8; crate::signal_info::DIG_MAX_LENGTH];
+        _file.read_exact(&mut buffer).unwrap();
+        self.signal_info.dig_max = std::str::from_utf8(&buffer)
+            .unwrap()
+            .trim()
+            .parse::<i16>()
+            .unwrap();
+        Ok(())
+    }
+
+    pub fn write_to_file_filter(&self, _file: &mut File) -> Result<(), std::io::Error> {
+        _file.write_all(self.get_string_filter().as_bytes())
+    }
+    pub fn read_from_file_filter(&mut self, _file: &mut File) -> Result<(), &str> {
+        let mut buffer = [0u8; crate::signal_info::FILTER_LENGTH];
+        _file.read_exact(&mut buffer).unwrap();
+        self.signal_info.filter = std::str::from_utf8(&buffer).unwrap().trim().to_string();
+        Ok(())
+    }
+
+    pub fn write_to_file_samples_per_record(&self, _file: &mut File) -> Result<(), std::io::Error> {
+        _file.write_all(self.get_string_samples_per_record().as_bytes())
+    }
+    pub fn read_from_file_samples_per_record(&mut self, _file: &mut File) -> Result<(), &str> {
+        let mut buffer = [0u8; crate::signal_info::SAMPLES_PER_RECORD_LENGTH];
+        _file.read_exact(&mut buffer).unwrap();
+        self.signal_info.samples_per_record = std::str::from_utf8(&buffer)
+            .unwrap()
+            .trim()
+            .parse::<u16>()
+            .unwrap();
+        Ok(())
+    }
+
+    pub fn write_to_file_comment(&self, _file: &mut File) -> Result<(), std::io::Error> {
+        _file.write_all(self.get_string_comment().as_bytes())
+    }
+    pub fn read_from_file_comment(&mut self, _file: &mut File) -> Result<(), &str> {
+        let mut buffer = [0u8; crate::signal_info::COMMENT_LENGTH];
+        _file.read_exact(&mut buffer).unwrap();
+        self.signal_info.comment = std::str::from_utf8(&buffer).unwrap().trim().to_string();
+        Ok(())
     }
 
     pub fn get_string_signal_label(&self) -> String {
@@ -60,7 +185,7 @@ impl Signal {
         self.downsample_factor = _downsample_factor;
     }
 
-    pub fn set_sample(&mut self, _sample: u16) -> Result<(), &str> {
+    pub fn set_sample(&mut self, _sample: i16) -> Result<(), &str> {
         self.actual_downsample_value = self.actual_downsample_value + 1;
         if self.actual_downsample_value < self.downsample_factor {
             return Ok(());
@@ -69,7 +194,13 @@ impl Signal {
         self.actual_downsample_value = 0;
 
         if self.samples.len() < self.signal_info.samples_per_record as usize {
-            self.samples.push(_sample);
+            if _sample < self.signal_info.dig_min {
+                self.samples.push(self.signal_info.dig_min);
+            } else if _sample > self.signal_info.dig_max {
+                self.samples.push(self.signal_info.dig_max);
+            } else {
+                self.samples.push(_sample);
+            }
             Ok(())
         } else {
             Err("No place in samples buffer")
