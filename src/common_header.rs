@@ -1,5 +1,5 @@
 use chrono::{DateTime, Local};
-use std::fs::*;
+use std::fs::File;
 use std::io::*;
 use std::result::Result;
 use std::time::SystemTime;
@@ -90,41 +90,31 @@ impl CommonHeader {
     pub fn get_records_count(&self) -> u32 {
         self.records_count
     }
+
     pub fn get_signals_count(&self) -> u32 {
         self.signals_count
+    }
+
+    pub fn get_header_size(&self) -> u32 {
+        self.header_size
     }
 
     pub fn write_to_file(&mut self, _file: &mut File) -> Result<(), &str> {
         _file.seek(SeekFrom::Start(0)).unwrap();
 
-        let mut var = format!("{:<1$}", self.edf_version, VERSION_LENGTH);
-        _file.write_all(var.as_bytes()).unwrap();
-
-        var = format!("{:<1$}", self.patient_id, PATIENT_ID_LENGTH);
-        _file.write_all(var.as_bytes()).unwrap();
-
-        var = format!("{:<1$}", self.record_id, RECORD_ID_LENGTH);
-        _file.write_all(var.as_bytes()).unwrap();
-
-        var = format!("{:<1$}", self.start_date, START_DATE_LENGTH);
-        _file.write_all(var.as_bytes()).unwrap();
-
-        var = format!("{:<1$}", self.start_time, START_TIME_LENGTH);
-        _file.write_all(var.as_bytes()).unwrap();
-
-        var = format!("{:<1$}", self.header_size, HEADER_SIZE_LENGTH);
-        _file.write_all(var.as_bytes()).unwrap();
-
-        var = format!("{:<1$}", self.comment, COMMENT_LENGTH);
-        _file.write_all(var.as_bytes()).unwrap();
-
-        var = format!("{:<1$}", self.records_count, RECORDS_COUNT_LENGTH);
-        _file.write_all(var.as_bytes()).unwrap();
-
-        var = format!("{:<1$}", self.record_duration, RECORD_DURATION_LENGTH);
-        _file.write_all(var.as_bytes()).unwrap();
-
-        var = format!("{:<1$}", self.signals_count, SIGNALS_COUNT_LENGTH);
+        let mut var: String = format!("{:<1$}", self.edf_version, VERSION_LENGTH);
+        var.push_str(&format!("{:<1$}", self.patient_id, PATIENT_ID_LENGTH));
+        var.push_str(&format!("{:<1$}", self.record_id, RECORD_ID_LENGTH));
+        var.push_str(&format!("{:<1$}", self.start_date, START_DATE_LENGTH));
+        var.push_str(&format!("{:<1$}", self.start_time, START_TIME_LENGTH));
+        var.push_str(&format!("{:<1$}", self.header_size, HEADER_SIZE_LENGTH));
+        var.push_str(&format!("{:<1$}", self.comment, COMMENT_LENGTH));
+        var.push_str(&format!("{:<1$}", self.records_count, RECORDS_COUNT_LENGTH));
+        var.push_str(&format!(
+            "{:<1$}",
+            self.record_duration, RECORD_DURATION_LENGTH
+        ));
+        var.push_str(&format!("{:<1$}", self.signals_count, SIGNALS_COUNT_LENGTH));
         _file.write_all(var.as_bytes()).unwrap();
 
         Ok(())

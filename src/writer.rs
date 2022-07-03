@@ -88,7 +88,7 @@ impl Writer {
             signal.write_to_file_comment(_file).unwrap();
         }
 
-        let mut max_record_per_sample: u16 = 0;
+        let mut max_record_per_sample = 0;
         for signal in self.signals.iter() {
             if signal.get_samples_per_record() > max_record_per_sample {
                 max_record_per_sample = signal.get_samples_per_record();
@@ -102,7 +102,9 @@ impl Writer {
         }
 
         for signal in self.signals.iter_mut() {
-            signal.set_downsample_factor(max_record_per_sample / signal.get_samples_per_record());
+            signal.set_write_downsample_factor(
+                max_record_per_sample / signal.get_samples_per_record(),
+            );
         }
 
         self.records = 0;
@@ -133,19 +135,19 @@ impl Writer {
         }
 
         for i in 0.._samples.len() {
-            self.signals[i].set_sample(_samples[i]).unwrap();
+            self.signals[i].set_write_sample(_samples[i]).unwrap();
         }
 
-        if self.signals[0].is_samples_buffer_full() {
+        if self.signals[0].is_write_buffer_full() {
+            let mut _file = self.file.as_mut().unwrap();
+
             for signal in self.signals.iter_mut() {
-                signal.write_values_to_file(self.file.as_mut().unwrap());
+                signal.write_values_to_file(_file);
             }
 
             self.records = self.records + 1;
             self.cmn_header.set_records_count(self.records);
-            self.cmn_header
-                .write_to_file(self.file.as_mut().unwrap())
-                .unwrap();
+            self.cmn_header.write_to_file(_file).unwrap();
         }
 
         Ok(())

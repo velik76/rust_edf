@@ -72,4 +72,5 @@ fn main() {
 
     let mut reader: Reader = Reader::new(&file_name);
     reader.start().unwrap();
+    println!("Records coung: {:?}", reader.get_records_count());
 }

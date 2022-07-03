@@ -5,25 +5,61 @@ use std::result::Result;
 use std::{mem, slice};
 
 #[derive(Clone)]
-pub struct Signal {
-    signal_info: SignalInfo,
+struct WriteControl {
     downsample_factor: u16,
     actual_downsample_value: u16,
     samples: Vec<i16>,
+}
+
+impl WriteControl {
+    pub fn new() -> WriteControl {
+        WriteControl {
+            downsample_factor: 0,
+            actual_downsample_value: 0,
+            samples: Vec::new(),
+        }
+    }
+}
+
+#[derive(Clone)]
+struct ReadControl {
+    samples: Vec<i16>,
+    start_record: u32,
+    records_cnt: u32,
+}
+
+impl ReadControl {
+    pub fn new() -> ReadControl {
+        ReadControl {
+            samples: Vec::new(),
+            start_record: 0,
+            records_cnt: 0,
+        }
+    }
+}
+
+#[derive(Clone)]
+pub struct Signal {
+    signal_info: SignalInfo,
+    write_control: WriteControl,
+    read_control: ReadControl,
 }
 
 impl Signal {
     pub fn new() -> Signal {
         Signal {
             signal_info: SignalInfo::new(),
-            downsample_factor: 0,
-            actual_downsample_value: 0,
-            samples: Vec::new(),
+            write_control: WriteControl::new(),
+            read_control: ReadControl::new(),
         }
     }
 
     pub fn set_signal_info(&mut self, _signal_info: SignalInfo) {
         self.signal_info = _signal_info;
+    }
+
+    pub fn get_signal_samples_per_record(&self) -> u16 {
+        self.signal_info.samples_per_record
     }
 
     pub fn write_to_file_signal_label(&self, _file: &mut File) -> Result<(), std::io::Error> {
@@ -181,25 +217,25 @@ impl Signal {
         self.signal_info.samples_per_record
     }
 
-    pub fn set_downsample_factor(&mut self, _downsample_factor: u16) {
-        self.downsample_factor = _downsample_factor;
+    pub fn set_write_downsample_factor(&mut self, _downsample_factor: u16) {
+        self.write_control.downsample_factor = _downsample_factor;
     }
 
-    pub fn set_sample(&mut self, _sample: i16) -> Result<(), &str> {
-        self.actual_downsample_value = self.actual_downsample_value + 1;
-        if self.actual_downsample_value < self.downsample_factor {
+    pub fn set_write_sample(&mut self, _sample: i16) -> Result<(), &str> {
+        self.write_control.actual_downsample_value = self.write_control.actual_downsample_value + 1;
+        if self.write_control.actual_downsample_value < self.write_control.downsample_factor {
             return Ok(());
         }
 
-        self.actual_downsample_value = 0;
+        self.write_control.actual_downsample_value = 0;
 
-        if self.samples.len() < self.signal_info.samples_per_record as usize {
+        if self.write_control.samples.len() < self.signal_info.samples_per_record as usize {
             if _sample < self.signal_info.dig_min {
-                self.samples.push(self.signal_info.dig_min);
+                self.write_control.samples.push(self.signal_info.dig_min);
             } else if _sample > self.signal_info.dig_max {
-                self.samples.push(self.signal_info.dig_max);
+                self.write_control.samples.push(self.signal_info.dig_max);
             } else {
-                self.samples.push(_sample);
+                self.write_control.samples.push(_sample);
             }
             Ok(())
         } else {
@@ -207,20 +243,23 @@ impl Signal {
         }
     }
 
-    pub fn is_samples_buffer_full(&self) -> bool {
-        let len = self.samples.len();
+    #[inline(always)]
+    pub fn is_write_buffer_full(&self) -> bool {
+        let len = self.write_control.samples.len();
         len >= self.signal_info.samples_per_record as usize
     }
 
     pub fn write_values_to_file(&mut self, _file: &mut File) {
         let slice_u8: &[u8] = unsafe {
             slice::from_raw_parts(
-                self.samples.as_ptr() as *const u8,
-                self.samples.len() * mem::size_of::<u16>(),
+                self.write_control.samples.as_ptr() as *const u8,
+                self.write_control.samples.len() * mem::size_of::<u16>(),
             )
         };
         _file.seek(std::io::SeekFrom::End(0)).unwrap();
         _file.write_all(slice_u8).unwrap();
-        self.samples.clear();
+        self.write_control.samples.clear();
     }
+
+    pub fn set_read_values(&mut self, _start_record: u32, _records_cnt: u32) {}
 }
