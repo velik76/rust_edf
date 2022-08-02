@@ -64,7 +64,6 @@ impl Signal {
     }
 
     pub fn write_to_file_signal_label(&self, _file: &mut File) -> Result<(), std::io::Error> {
-        //        _file.write_all(self.get_string_signal_label().as_bytes())
         _file.write_all(self.signal_info.get_formatted(Element::Label).as_bytes())
     }
     pub fn read_from_file_signal_label(&mut self, _file: &mut File) -> Result<(), &str> {
@@ -75,7 +74,11 @@ impl Signal {
     }
 
     pub fn write_to_file_transducer(&self, _file: &mut File) -> Result<(), std::io::Error> {
-        _file.write_all(self.get_string_transducer().as_bytes())
+        _file.write_all(
+            self.signal_info
+                .get_formatted(Element::Transducer)
+                .as_bytes(),
+        )
     }
     pub fn read_from_file_transducer(&mut self, _file: &mut File) -> Result<(), &str> {
         let mut buffer = [0u8; crate::signal_info::TRANSDUCER_LENGTH];
@@ -85,7 +88,7 @@ impl Signal {
     }
 
     pub fn write_to_file_phys_dimension(&self, _file: &mut File) -> Result<(), std::io::Error> {
-        _file.write_all(self.get_string_phys_dimension().as_bytes())
+        _file.write_all(self.signal_info.get_formatted(Element::PhysDim).as_bytes())
     }
     pub fn read_from_file_phys_dimension(&mut self, _file: &mut File) -> Result<(), &str> {
         let mut buffer = [0u8; crate::signal_info::PHYS_DIMENSION_LENGTH];
@@ -95,7 +98,7 @@ impl Signal {
     }
 
     pub fn write_to_file_phys_min(&self, _file: &mut File) -> Result<(), std::io::Error> {
-        _file.write_all(self.get_string_phys_min().as_bytes())
+        _file.write_all(self.signal_info.get_formatted(Element::PhysMin).as_bytes())
     }
     pub fn read_from_file_phys_min(&mut self, _file: &mut File) -> Result<(), &str> {
         let mut buffer = [0u8; crate::signal_info::PHYS_MIN_LENGTH];
@@ -109,7 +112,7 @@ impl Signal {
     }
 
     pub fn write_to_file_phys_max(&self, _file: &mut File) -> Result<(), std::io::Error> {
-        _file.write_all(self.get_string_phys_max().as_bytes())
+        _file.write_all(self.signal_info.get_formatted(Element::PhysMax).as_bytes())
     }
     pub fn read_from_file_phys_max(&mut self, _file: &mut File) -> Result<(), &str> {
         let mut buffer = [0u8; crate::signal_info::PHYS_MAX_LENGTH];
@@ -123,7 +126,7 @@ impl Signal {
     }
 
     pub fn write_to_file_dig_min(&self, _file: &mut File) -> Result<(), std::io::Error> {
-        _file.write_all(self.get_string_dig_min().as_bytes())
+        _file.write_all(self.signal_info.get_formatted(Element::DigMin).as_bytes())
     }
     pub fn read_from_file_dig_min(&mut self, _file: &mut File) -> Result<(), &str> {
         let mut buffer = [0u8; crate::signal_info::DIG_MIN_LENGTH];
@@ -137,7 +140,7 @@ impl Signal {
     }
 
     pub fn write_to_file_dig_max(&self, _file: &mut File) -> Result<(), std::io::Error> {
-        _file.write_all(self.get_string_dig_max().as_bytes())
+        _file.write_all(self.signal_info.get_formatted(Element::DigMax).as_bytes())
     }
     pub fn read_from_file_dig_max(&mut self, _file: &mut File) -> Result<(), &str> {
         let mut buffer = [0u8; crate::signal_info::DIG_MAX_LENGTH];
@@ -151,7 +154,7 @@ impl Signal {
     }
 
     pub fn write_to_file_filter(&self, _file: &mut File) -> Result<(), std::io::Error> {
-        _file.write_all(self.get_string_filter().as_bytes())
+        _file.write_all(self.signal_info.get_formatted(Element::Filter).as_bytes())
     }
     pub fn read_from_file_filter(&mut self, _file: &mut File) -> Result<(), &str> {
         let mut buffer = [0u8; crate::signal_info::FILTER_LENGTH];
@@ -161,7 +164,11 @@ impl Signal {
     }
 
     pub fn write_to_file_samples_per_record(&self, _file: &mut File) -> Result<(), std::io::Error> {
-        _file.write_all(self.get_string_samples_per_record().as_bytes())
+        _file.write_all(
+            self.signal_info
+                .get_formatted(Element::SamplesPerSec)
+                .as_bytes(),
+        )
     }
     pub fn read_from_file_samples_per_record(&mut self, _file: &mut File) -> Result<(), &str> {
         let mut buffer = [0u8; crate::signal_info::SAMPLES_PER_RECORD_LENGTH];
@@ -175,48 +182,13 @@ impl Signal {
     }
 
     pub fn write_to_file_comment(&self, _file: &mut File) -> Result<(), std::io::Error> {
-        _file.write_all(self.get_string_comment().as_bytes())
+        _file.write_all(self.signal_info.get_formatted(Element::Comment).as_bytes())
     }
     pub fn read_from_file_comment(&mut self, _file: &mut File) -> Result<(), &str> {
         let mut buffer = [0u8; crate::signal_info::COMMENT_LENGTH];
         _file.read_exact(&mut buffer).unwrap();
         self.signal_info.comment = std::str::from_utf8(&buffer).unwrap().trim().to_string();
         Ok(())
-    }
-
-    pub fn get_formatted(&self, _element: Element) -> String {
-        self.signal_info.get_formatted(_element)
-    }
-
-    pub fn get_string_signal_label(&self) -> String {
-        self.signal_info.get_formatted_signal_info()
-    }
-    pub fn get_string_transducer(&self) -> String {
-        self.signal_info.get_formatted_transducer()
-    }
-    pub fn get_string_phys_dimension(&self) -> String {
-        self.signal_info.get_formatted_phys_dimension()
-    }
-    pub fn get_string_phys_min(&self) -> String {
-        self.signal_info.get_formatted_phys_min()
-    }
-    pub fn get_string_phys_max(&self) -> String {
-        self.signal_info.get_formatted_phys_max()
-    }
-    pub fn get_string_dig_min(&self) -> String {
-        self.signal_info.get_formatted_dig_min()
-    }
-    pub fn get_string_dig_max(&self) -> String {
-        self.signal_info.get_formatted_dig_max()
-    }
-    pub fn get_string_filter(&self) -> String {
-        self.signal_info.get_formatted_filter()
-    }
-    pub fn get_string_samples_per_record(&self) -> String {
-        self.signal_info.get_formatted_samples_per_record()
-    }
-    pub fn get_string_comment(&self) -> String {
-        self.signal_info.get_formatted_comment()
     }
 
     pub fn get_samples_per_record(&self) -> u16 {

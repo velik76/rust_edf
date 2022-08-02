@@ -68,44 +68,4 @@ impl SignalInfo {
             Element::Comment => format!("{:<1$}", self.comment, COMMENT_LENGTH),
         }
     }
-
-    pub fn get_formatted_signal_info(&self) -> String {
-        format!("{:<1$}", self.label, LABEL_LENGTH)
-    }
-
-    pub fn get_formatted_transducer(&self) -> String {
-        format!("{:<1$}", self.transducer, TRANSDUCER_LENGTH)
-    }
-
-    pub fn get_formatted_phys_dimension(&self) -> String {
-        format!("{:<1$}", self.phys_dimension, PHYS_DIMENSION_LENGTH)
-    }
-
-    pub fn get_formatted_phys_min(&self) -> String {
-        format!("{:<1$}", self.phys_min, PHYS_MIN_LENGTH)
-    }
-
-    pub fn get_formatted_phys_max(&self) -> String {
-        format!("{:<1$}", self.phys_max, PHYS_MAX_LENGTH)
-    }
-
-    pub fn get_formatted_dig_min(&self) -> String {
-        format!("{:<1$}", self.dig_min, DIG_MIN_LENGTH)
-    }
-
-    pub fn get_formatted_dig_max(&self) -> String {
-        format!("{:<1$}", self.dig_max, DIG_MAX_LENGTH)
-    }
-
-    pub fn get_formatted_filter(&self) -> String {
-        format!("{:<1$}", self.filter, FILTER_LENGTH)
-    }
-
-    pub fn get_formatted_samples_per_record(&self) -> String {
-        format!("{:<1$}", self.samples_per_record, SAMPLES_PER_RECORD_LENGTH)
-    }
-
-    pub fn get_formatted_comment(&self) -> String {
-        format!("{:<1$}", self.comment, COMMENT_LENGTH)
-    }
 }
