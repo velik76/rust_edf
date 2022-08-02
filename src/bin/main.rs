@@ -78,7 +78,7 @@ fn test_writer(_filename: &'static str) {
 fn test_reader(_filename: &'static str) {
     let mut reader = Reader::new(&_filename.to_string());
     reader.start().unwrap();
-    println!("Records coung: {:?}", reader.get_records_count());
+    println!("Records count: {:?}", reader.get_records_count());
 }
 
 fn main() {

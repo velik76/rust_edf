@@ -1,3 +1,4 @@
+use crate::signal_info::Element;
 use crate::signal_info::SignalInfo;
 use std::fs::*;
 use std::io::*;
@@ -63,7 +64,8 @@ impl Signal {
     }
 
     pub fn write_to_file_signal_label(&self, _file: &mut File) -> Result<(), std::io::Error> {
-        _file.write_all(self.get_string_signal_label().as_bytes())
+        //        _file.write_all(self.get_string_signal_label().as_bytes())
+        _file.write_all(self.signal_info.get_formatted(Element::Label).as_bytes())
     }
     pub fn read_from_file_signal_label(&mut self, _file: &mut File) -> Result<(), &str> {
         let mut buffer = [0u8; crate::signal_info::LABEL_LENGTH];
@@ -180,6 +182,10 @@ impl Signal {
         _file.read_exact(&mut buffer).unwrap();
         self.signal_info.comment = std::str::from_utf8(&buffer).unwrap().trim().to_string();
         Ok(())
+    }
+
+    pub fn get_formatted(&self, _element: Element) -> String {
+        self.signal_info.get_formatted(_element)
     }
 
     pub fn get_string_signal_label(&self) -> String {

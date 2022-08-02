@@ -9,6 +9,19 @@ pub const FILTER_LENGTH: usize = 80;
 pub const SAMPLES_PER_RECORD_LENGTH: usize = 8;
 pub const COMMENT_LENGTH: usize = 32;
 
+pub enum Element {
+    Label,
+    Transducer,
+    PhysDim,
+    PhysMin,
+    PhysMax,
+    DigMin,
+    DigMax,
+    Filter,
+    SamplesPerSec,
+    Comment,
+}
+
 #[derive(Clone)]
 pub struct SignalInfo {
     pub label: String,
@@ -36,6 +49,23 @@ impl SignalInfo {
             filter: String::new(),
             samples_per_record: 0,
             comment: String::new(),
+        }
+    }
+
+    pub fn get_formatted(&self, _element: Element) -> String {
+        match _element {
+            Element::Label => format!("{:<1$}", self.label, LABEL_LENGTH),
+            Element::Transducer => format!("{:<1$}", self.transducer, TRANSDUCER_LENGTH),
+            Element::PhysDim => format!("{:<1$}", self.phys_dimension, PHYS_DIMENSION_LENGTH),
+            Element::PhysMin => format!("{:<1$}", self.phys_min, PHYS_MIN_LENGTH),
+            Element::PhysMax => format!("{:<1$}", self.phys_max, PHYS_MAX_LENGTH),
+            Element::DigMin => format!("{:<1$}", self.dig_min, DIG_MIN_LENGTH),
+            Element::DigMax => format!("{:<1$}", self.dig_max, DIG_MAX_LENGTH),
+            Element::Filter => format!("{:<1$}", self.filter, FILTER_LENGTH),
+            Element::SamplesPerSec => {
+                format!("{:<1$}", self.samples_per_record, SAMPLES_PER_RECORD_LENGTH)
+            }
+            Element::Comment => format!("{:<1$}", self.comment, COMMENT_LENGTH),
         }
     }
 
