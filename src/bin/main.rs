@@ -44,33 +44,45 @@ fn get_signals_infos() -> Vec<SignalInfo> {
     result
 }
 
-fn main() {
-    //    const signals_infos
-    let file_name: String = "./test.edf".to_string();
-    let patient_id: String = "First Patient".to_string();
-    let record_id: String = "NoId".to_string();
-    let comment: String = "Rust EDF Writer".to_string();
+fn test_writer(_filename: &'static str) {
+    let mut writer = Writer::new(&_filename.to_string());
 
-    let mut writer: Writer = Writer::new(&file_name);
+    let patient_id = "First Patient";
+    let record_id = "NoId";
+    let comment = "Rust EDF Writer";
 
     for signal_info in get_signals_infos() {
         writer.add_signal(signal_info);
     }
 
-    writer.start(patient_id, record_id, comment).unwrap();
+    writer
+        .start(
+            &patient_id.to_string(),
+            &record_id.to_string(),
+            &comment.to_string(),
+        )
+        .unwrap();
 
     for i in 0..1000 {
         let mut data: Vec<i16> = Vec::new();
         for _ in get_signals_infos() {
-            data.push(i);
+            data.push(i % 100);
         }
 
         writer.set_samples(&mut data).unwrap();
     }
 
     writer.stop().unwrap();
+}
 
-    let mut reader: Reader = Reader::new(&file_name);
+fn test_reader(_filename: &'static str) {
+    let mut reader = Reader::new(&_filename.to_string());
     reader.start().unwrap();
     println!("Records coung: {:?}", reader.get_records_count());
+}
+
+fn main() {
+    let file_name = "./test.edf";
+    test_writer(file_name);
+    test_reader(file_name);
 }

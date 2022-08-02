@@ -84,8 +84,8 @@ impl CommonHeader {
         Ok(())
     }
 
-    pub fn set_records_count(&mut self, _records_cont: u32) {
-        self.records_count = _records_cont;
+    pub fn set_records_count(&mut self, _records_count: u32) {
+        self.records_count = _records_count;
     }
     pub fn get_records_count(&self) -> u32 {
         self.records_count

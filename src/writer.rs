@@ -33,9 +33,9 @@ impl Writer {
 
     pub fn start(
         &mut self,
-        _patient_id: String,
-        _record_id: String,
-        _comment: String,
+        _patient_id: &String,
+        _record_id: &String,
+        _comment: &String,
     ) -> Result<(), &str> {
         if self.signals.len() == 0 {
             return Err("No signals initialized");
@@ -44,9 +44,9 @@ impl Writer {
         self.file = Some(File::create(&self.file_name).unwrap());
         self.cmn_header
             .start(
-                _patient_id,
-                _record_id,
-                _comment,
+                _patient_id.to_string(),
+                _record_id.to_string(),
+                _comment.to_string(),
                 1,
                 self.signals.len() as u32,
             )
