@@ -82,6 +82,14 @@ impl Reader {
     }
 
     pub fn read_signals(&mut self, _start_record: u32, _records_cnt: u32) -> Result<(), &str> {
+        if _start_record >= self.cmn_header.get_records_count() {
+            return Err("Invalid start record");
+        }
+
+        for signal in self.signals.iter_mut() {
+            //            signal.
+        }
+
         /*         let mut _file = self.file.as_mut().unwrap();
 
                let mut _record_size: u64 = 0;

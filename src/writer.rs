@@ -1,5 +1,6 @@
 use crate::common_header::CommonHeader;
 use crate::signal::Signal;
+use crate::signal_info::Element;
 use crate::signal_info::SignalInfo;
 use std::fs::File;
 use std::path::PathBuf;
@@ -58,34 +59,52 @@ impl Writer {
 
         let mut _file = self.file.as_mut().unwrap();
         for signal in self.signals.iter() {
-            signal.write_to_file_signal_label(_file).unwrap();
+            signal.write_to_file_element(Element::Label, _file).unwrap();
         }
         for signal in self.signals.iter() {
-            signal.write_to_file_transducer(_file).unwrap();
+            signal
+                .write_to_file_element(Element::Transducer, _file)
+                .unwrap();
         }
         for signal in self.signals.iter() {
-            signal.write_to_file_phys_dimension(_file).unwrap();
+            signal
+                .write_to_file_element(Element::PhysDim, _file)
+                .unwrap();
         }
         for signal in self.signals.iter() {
-            signal.write_to_file_phys_min(_file).unwrap();
+            signal
+                .write_to_file_element(Element::PhysMin, _file)
+                .unwrap();
         }
         for signal in self.signals.iter() {
-            signal.write_to_file_phys_max(_file).unwrap();
+            signal
+                .write_to_file_element(Element::PhysMax, _file)
+                .unwrap();
         }
         for signal in self.signals.iter() {
-            signal.write_to_file_dig_min(_file).unwrap();
+            signal
+                .write_to_file_element(Element::DigMin, _file)
+                .unwrap();
         }
         for signal in self.signals.iter() {
-            signal.write_to_file_dig_max(_file).unwrap();
+            signal
+                .write_to_file_element(Element::DigMax, _file)
+                .unwrap();
         }
         for signal in self.signals.iter() {
-            signal.write_to_file_filter(_file).unwrap();
+            signal
+                .write_to_file_element(Element::Filter, _file)
+                .unwrap();
         }
         for signal in self.signals.iter() {
-            signal.write_to_file_samples_per_record(_file).unwrap();
+            signal
+                .write_to_file_element(Element::SamplesPerRec, _file)
+                .unwrap();
         }
         for signal in self.signals.iter() {
-            signal.write_to_file_comment(_file).unwrap();
+            signal
+                .write_to_file_element(Element::Comment, _file)
+                .unwrap();
         }
 
         let mut max_record_per_sample = 0;

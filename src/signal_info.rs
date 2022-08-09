@@ -18,7 +18,7 @@ pub enum Element {
     DigMin,
     DigMax,
     Filter,
-    SamplesPerSec,
+    SamplesPerRec,
     Comment,
 }
 
@@ -62,7 +62,7 @@ impl SignalInfo {
             Element::DigMin => format!("{:<1$}", self.dig_min, DIG_MIN_LENGTH),
             Element::DigMax => format!("{:<1$}", self.dig_max, DIG_MAX_LENGTH),
             Element::Filter => format!("{:<1$}", self.filter, FILTER_LENGTH),
-            Element::SamplesPerSec => {
+            Element::SamplesPerRec => {
                 format!("{:<1$}", self.samples_per_record, SAMPLES_PER_RECORD_LENGTH)
             }
             Element::Comment => format!("{:<1$}", self.comment, COMMENT_LENGTH),
