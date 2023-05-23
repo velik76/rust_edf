@@ -24,6 +24,7 @@ impl WriteControl {
 
 #[derive(Clone)]
 struct ReadControl {
+    offset_to_values_in_record: u32,
     samples: Vec<i16>,
     start_record: u32,
     records_cnt: u32,
@@ -32,6 +33,7 @@ struct ReadControl {
 impl ReadControl {
     pub fn new() -> ReadControl {
         ReadControl {
+            offset_to_values_in_record: 0,
             samples: Vec::new(),
             start_record: 0,
             records_cnt: 0,

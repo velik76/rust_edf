@@ -86,7 +86,11 @@ impl Reader {
             return Err("Invalid start record");
         }
 
+        let mut offset: u32 = 0;
         for signal in self.signals.iter_mut() {
+            let mut offset = self.cmn_header.get_header_size();
+            //            let  =
+
             //            signal.
         }
 
